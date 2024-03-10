@@ -1,0 +1,15 @@
+{
+    "question": "What is the capital of France?",
+    "options": ["Paris", "London", "Berlin", "Rome"],
+    "correctAnswer": "Paris"
+}
+{
+    "question": "Who painted the Mona Lisa?",
+    "options": ["Leonardo da Vinci", "Vincent van Gogh", "Pablo Picasso", "Michelangelo"],
+    "correctAnswer": "Leonardo da Vinci"
+}
+{
+    "question": "What is the tallest mountain in the world?",
+    "options": ["Mount Everest", "K2", "Kangchenjunga", "Lhotse"],
+    "correctAnswer": "Mount Everest"
+}
