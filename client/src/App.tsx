@@ -1,6 +1,6 @@
 // import { useState } from 'react';
 import './App.css';
-import GameScreen from './components/GameScreen';
+import GameScreen from './components/GameController';
 
 function App() {
   return (
