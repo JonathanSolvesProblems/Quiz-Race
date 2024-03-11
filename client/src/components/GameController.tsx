@@ -1,13 +1,12 @@
 // GameController.tsx
 import React, { useState, useEffect } from 'react';
-import PlayBot from './PlayBot';
-import PlayFriend from './PlayFriend';
-import PlaySolo from './PlaySolo';
-import QuestionRenderer from './QuestionRenderer';
+import PlayBot from './renderers/PlayBot';
+import PlayFriend from './renderers/PlayFriend';
+import PlaySolo from './renderers/PlaySolo';
+import QuestionRenderer from './renderers/QuestionRenderer';
 import { useQuery } from 'convex/react';
 import { api } from '../../convex/_generated/api';
-import ChatConnect from './ChatConnect';
-import io from 'socket.io-client';
+import MultiplayerController from './multiplayer/MultiplayerController';
 
 interface QuestionSchema {
   question: string;
@@ -16,7 +15,6 @@ interface QuestionSchema {
 }
 
 const GameController: React.FC = () => {
-  const socket = io.connect('http://localhost:3001');
   const [playBotClicked, setPlayBotClicked] = useState<boolean>(false);
   const [playFriendClicked, setPlayFriendClicked] = useState<boolean>(false);
   const [playSoloClicked, setPlaySoloClicked] = useState<boolean>(false);
@@ -57,7 +55,9 @@ const GameController: React.FC = () => {
     setPlayFriendClicked(true);
     setPlayBotClicked(false);
     setPlaySoloClicked(false);
-    if (questions !== undefined) setQuestions(shuffleArray(questions));
+    if (questions !== undefined) {
+      setQuestions(shuffleArray(questions));
+    }
   };
 
   const handleCorrectAnswerSelected = () => {
@@ -114,8 +114,14 @@ const GameController: React.FC = () => {
           </div>
         )}
 
-      {playFriendClicked && <ChatConnect socket={socket} />}
-
+      {playFriendClicked && questions !== undefined && (
+        <MultiplayerController
+          question={questions[currentQuestionIndex].question}
+          options={questions[currentQuestionIndex].options}
+          correctAnswer={questions[currentQuestionIndex].correctAnswer}
+          onCorrectAnswerSelected={handleCorrectAnswerSelected}
+        />
+      )}
       {winner && questions !== undefined && (
         <div>
           <p>

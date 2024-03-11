@@ -26,6 +26,7 @@ io.on('connection', (socket) => {
   socket.on('send_message', (data) => {
     // Only send data to defined room
     socket.to(data.room).emit('receive_message', data);
+    console.log(`Message Received: ${data.message}`);
   });
 
   socket.on('disconnect', () => {

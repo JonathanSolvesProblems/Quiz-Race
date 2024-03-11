@@ -1,11 +1,23 @@
 import React, { useState } from 'react';
 import Chat from './Chat';
+import QuestionsMultiplayer from './QuestionsMultiplayer';
+import io from 'socket.io-client';
 
 interface Props {
-  socket: any;
+  question: string;
+  options: string[];
+  correctAnswer: string;
+  onCorrectAnswerSelected: () => void;
 }
 
-const ChatConnect = ({ socket }: Props) => {
+const socket = io.connect('http://localhost:3001');
+
+const MultiplayerController = ({
+  question,
+  options,
+  correctAnswer,
+  onCorrectAnswerSelected,
+}: Props) => {
   const [username, setUsername] = useState('');
   const [room, setRoom] = useState('');
   const [displayChat, setDisplayChat] = useState<boolean>(false);
@@ -39,10 +51,18 @@ const ChatConnect = ({ socket }: Props) => {
           <button onClick={joinRoom}>Join a Room</button>
         </div>
       ) : (
-        <Chat socket={socket} username={username} room={room} />
+        <div>
+          <QuestionsMultiplayer
+            question={question}
+            options={options}
+            correctAnswer={correctAnswer}
+            onCorrectAnswerSelected={onCorrectAnswerSelected}
+          />
+          <Chat socket={socket} username={username} room={room} />
+        </div>
       )}
     </div>
   );
 };
 
-export default ChatConnect;
+export default MultiplayerController;

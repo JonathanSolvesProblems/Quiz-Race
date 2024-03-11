@@ -50,11 +50,12 @@ const Chat = ({ socket, username, room }: Props) => {
       </div>
       <div className="chat-main">
         <ScrollToBottom className="message-container">
-          {messageContents.map((messageData) => {
+          {messageContents.map((messageData, index) => {
             return (
               <div
                 className="message"
                 id={username === messageData.username ? 'you' : 'other'}
+                key={index}
               >
                 <div>
                   <div className="message-content">
