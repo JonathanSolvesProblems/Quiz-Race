@@ -2,7 +2,6 @@ import express from 'express';
 import http from 'http';
 import cors from 'cors';
 import { Server } from 'socket.io';
-// import redisAdapter from 'socket.io-redis';
 
 const app = express();
 app.use(cors());
@@ -10,6 +9,7 @@ app.use(cors());
 const server = http.createServer(app);
 const host = 'localhost';
 const port = 5173;
+const rooms = {};
 
 const io = new Server(server, {
   cors: {
@@ -18,22 +18,30 @@ const io = new Server(server, {
   },
 });
 
-// io.adapter(redisAdapter({ host: host, port: 6379 }));
-
 io.on('connection', (socket) => {
   console.log(`User Connected: ${socket.id}`); // When convex, can add name of user
 
-  socket.on('join_room', (data) => {
-    socket.join(data);
-    const room = io.sockets.adapter.rooms.get(data);
+  socket.on('join_room', (room) => {
+    socket.join(room);
 
-    const numOfPlayers = room ? room.size : 0;
+    if (!rooms[room]) {
+      rooms[room] = [];
+    }
 
-    // Emits the number of players to all clients in a room
-    socket.to(data).emit('room_capacity', numOfPlayers);
+    rooms[room].push(socket.id);
+    socket.to(room).emit('room_status', {
+      players: rooms[room].length,
+      maxPlayers: 2,
+    });
+
+    if (rooms[room].length === 2) {
+      socket.to(room).emit('start_game');
+    } else {
+      socket.emit('waiting_for_player');
+    }
 
     console.log(
-      `User with ID: ${socket.id} joined room ${data} with number of players ${numOfPlayers}`
+      `User with ID: ${socket.id} joined room ${room} with number of players ${rooms[room].length}`
     );
   });
 
@@ -44,13 +52,13 @@ io.on('connection', (socket) => {
   });
 
   socket.on('disconnect', () => {
-    const rooms = Object.keys(socket.rooms);
-    rooms.forEach((room) => {
-      const roomObj = io.sockets.adapter.rooms.get(room);
-      const numOfPlayers = roomObj ? roomObj.size - 1 : 0;
+    // const rooms = Object.keys(socket.rooms);
+    // rooms.forEach((room) => {
+    //   const roomObj = io.sockets.adapter.rooms.get(room);
+    //   const numOfPlayers = roomObj ? roomObj.size - 1 : 0;
 
-      socket.to(room).emit('room_capacity', numOfPlayers);
-    });
+    //   socket.to(room).emit('room_capacity', numOfPlayers);
+    // });
 
     console.log('User Disconnected', socket.id);
   });

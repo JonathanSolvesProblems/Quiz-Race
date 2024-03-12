@@ -6,7 +6,7 @@ import PlaySolo from './renderers/PlaySolo';
 import QuestionRenderer from './renderers/QuestionRenderer';
 import { useQuery } from 'convex/react';
 import { api } from '../../convex/_generated/api';
-import MultiplayerController from './multiplayer/MultiplayerController';
+import CreateQuestions from './renderers/CreateQuestions';
 
 interface QuestionSchema {
   question: string;
@@ -18,8 +18,11 @@ const GameController: React.FC = () => {
   const [playBotClicked, setPlayBotClicked] = useState<boolean>(false);
   const [playFriendClicked, setPlayFriendClicked] = useState<boolean>(false);
   const [playSoloClicked, setPlaySoloClicked] = useState<boolean>(false);
+  const [createQuestionsClicked, setCreateQuestionsClicked] =
+    useState<boolean>(false);
   const [questions, setQuestions] = useState<QuestionSchema[]>();
-  const questionTable = useQuery(api.questions.get);
+  const questionTable = useQuery(api.questions.getRecentQuestions);
+
   useEffect(() => {
     if (questionTable) {
       const mappedData = questionTable.map(
@@ -41,6 +44,7 @@ const GameController: React.FC = () => {
     setPlaySoloClicked(true);
     setPlayBotClicked(false);
     setPlayFriendClicked(false);
+    setCreateQuestionsClicked(false);
     if (questions !== undefined) setQuestions(shuffleArray(questions));
   };
 
@@ -48,6 +52,7 @@ const GameController: React.FC = () => {
     setPlayBotClicked(true);
     setPlayFriendClicked(false);
     setPlaySoloClicked(false);
+    setCreateQuestionsClicked(false);
     if (questions !== undefined) setQuestions(shuffleArray(questions));
   };
 
@@ -55,9 +60,17 @@ const GameController: React.FC = () => {
     setPlayFriendClicked(true);
     setPlayBotClicked(false);
     setPlaySoloClicked(false);
+    setCreateQuestionsClicked(false);
     if (questions !== undefined) {
       setQuestions(shuffleArray(questions));
     }
+  };
+
+  const handleCreateQuestionsClicked = () => {
+    setCreateQuestionsClicked(true);
+    setPlayFriendClicked(false);
+    setPlayBotClicked(false);
+    setPlaySoloClicked(false);
   };
 
   const handleCorrectAnswerSelected = () => {
@@ -91,13 +104,19 @@ const GameController: React.FC = () => {
   return (
     <div>
       <h1>Quiz Race</h1>
-      {!playBotClicked && !playFriendClicked && !playSoloClicked && (
-        <div>
-          <PlaySolo onClick={handlePlaySoloClick} />
-          <PlayBot onClick={handlePlayBotClick} />
-          <PlayFriend onClick={handlePlayFriendClick} />
-        </div>
-      )}
+      {!playBotClicked &&
+        !playFriendClicked &&
+        !playSoloClicked &&
+        !createQuestionsClicked && (
+          <div>
+            <PlaySolo onClick={handlePlaySoloClick} />
+            <PlayBot onClick={handlePlayBotClick} />
+            <PlayFriend onClick={handlePlayFriendClick} />
+            <button onClick={handleCreateQuestionsClicked}>
+              Create Questions
+            </button>
+          </div>
+        )}
 
       {playSoloClicked &&
         !winner &&
@@ -115,12 +134,13 @@ const GameController: React.FC = () => {
         )}
 
       {playFriendClicked && questions !== undefined && (
-        <MultiplayerController
-          question={questions[currentQuestionIndex].question}
-          options={questions[currentQuestionIndex].options}
-          correctAnswer={questions[currentQuestionIndex].correctAnswer}
-          onCorrectAnswerSelected={handleCorrectAnswerSelected}
-        />
+        <div></div>
+        // {/* // <MultiplayerController */}
+        //   question={questions[currentQuestionIndex].question}
+        //   options={questions[currentQuestionIndex].options}
+        //   correctAnswer={questions[currentQuestionIndex].correctAnswer}
+        //   onCorrectAnswerSelected={handleCorrectAnswerSelected}
+        // />
       )}
       {winner && questions !== undefined && (
         <div>
@@ -130,6 +150,8 @@ const GameController: React.FC = () => {
           </p>{' '}
         </div>
       )}
+
+      {createQuestionsClicked && <CreateQuestions />}
     </div>
   );
 };

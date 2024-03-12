@@ -10,6 +10,11 @@ interface Props {
   onCorrectAnswerSelected: () => void;
 }
 
+interface RoomCapacity {
+  players: number;
+  maxPlayers: number;
+}
+
 const socket = io.connect('http://localhost:3001');
 
 const MultiplayerController = (props: Props) => {
@@ -17,37 +22,40 @@ const MultiplayerController = (props: Props) => {
   const [room, setRoom] = useState('');
   const [displayChat, setDisplayChat] = useState<boolean>(false);
   const [playerWaiting, setPlayerWaiting] = useState<string>('');
+  const [players, setPlayers] = useState<number>(0);
 
-  const joinRoom = () => {
+  const joinRoom = async () => {
     if (username !== '' && room !== '') {
-      socket.emit('join_room', room);
+      await socket.emit('join_room', room);
     } else {
       console.log('Username and room must be provided');
     }
   };
 
   useEffect(() => {
-    const handleRoomCapacity = (numOfPlayers: number) => {
-      console.log(numOfPlayers);
-      if (numOfPlayers > 1) {
-        console.log(
-          `${numOfPlayers} players have joined the lobby. Starting game...`
-        );
-        setPlayerWaiting('');
-        setDisplayChat(true);
-      } else {
-        const waitingWarning = `There needs to be at least 2 players to start a game. Currently the number of players is ${numOfPlayers}`;
-        console.log(waitingWarning);
-        setPlayerWaiting(waitingWarning);
-      }
-    };
+    socket.on('room_status', ({ players, maxPlayers }: RoomCapacity) => {
+      console.log(players, maxPlayers);
+      setPlayers(players);
+    });
 
-    socket.on('room_capacity', handleRoomCapacity);
+    socket.on('waiting_for_player', () => {
+      const waitingWarning = `There needs to be at least 2 players to start a game. Currently the number of players is ${players}`;
+      console.log(waitingWarning);
+      setPlayerWaiting(waitingWarning);
+    });
+
+    socket.on('start_game', () => {
+      console.log(`${players} players have joined the lobby. Starting game...`);
+      setPlayerWaiting('');
+      setDisplayChat(true);
+    });
 
     return () => {
-      socket.off('room_capacity', handleRoomCapacity);
+      socket.off('room_status');
+      socket.off('waiting_for_player');
+      socket.off('start_game');
     };
-  }, [socket, room]);
+  }, [socket]);
 
   return (
     <div>
