@@ -7,4 +7,16 @@ export default defineSchema({
     options: v.array(v.string()),
     correctAnswer: v.string()
   }),
+
+  rooms: defineTable({
+    status: v.string(),
+    player1_score: v.number(),
+    player2_score: v.number(),
+    capacity:  v.number(),
+    questions: v.array(v.string()),
+    options: v.array(v.array(v.string())),
+    correctAnswers: v.array(v.string()),
+    player1Ready: v.boolean(),
+    player2Ready: v.boolean()
+  }),
 })

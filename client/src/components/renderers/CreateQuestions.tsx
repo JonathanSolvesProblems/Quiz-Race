@@ -9,12 +9,16 @@ interface Question {
 }
 
 const CreateQuestions = () => {
+  const fetchRecentQuestions = useQuery(api.questions.getRecentQuestions);
+  const insertQuestion = useMutation(api.questions.createQuestion);
+
   const [question, setQuestion] = useState<string>('');
   const [options, setOptions] = useState<string[]>(['', '', '', '']);
   const [correctAnswer, setCorrectAnswer] = useState<string>('');
   const [recentQuestions, setRecentQuestions] = useState<Question[]>([]);
-  const fetchRecentQuestions = useQuery(api.questions.getRecentQuestions);
-  const insertQuestion = useMutation(api.questions.createQuestion);
+  const [selectedQuestionIndex, setSelectedQuestionIndex] = useState<
+    number | null
+  >(null);
 
   useEffect(() => {
     setRecentQuestions(fetchRecentQuestions || []);
@@ -53,6 +57,10 @@ const CreateQuestions = () => {
     }
   };
 
+  const handleQuestionClick = (index: number) => {
+    setSelectedQuestionIndex(index === selectedQuestionIndex ? null : index);
+  };
+
   return (
     <div>
       <h2>Create Your Own Questions</h2>
@@ -81,8 +89,23 @@ const CreateQuestions = () => {
       <div className="recent-questions-container">
         <h2>Recent Questions</h2>
         {recentQuestions.map((question, index) => (
-          <div key={index} className="question-item">
+          <div
+            key={index}
+            className="question-item"
+            onClick={() => handleQuestionClick(index)}
+          >
             <h3>{question.question}</h3>
+            {selectedQuestionIndex === index && (
+              <div>
+                <p>Options:</p>
+                <ul>
+                  {question.options.map((option, optionIndex) => (
+                    <li key={optionIndex}>{option}</li>
+                  ))}
+                </ul>
+                <p>Correct Answer: {question.correctAnswer}</p>
+              </div>
+            )}
           </div>
         ))}
       </div>

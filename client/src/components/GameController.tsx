@@ -7,6 +7,7 @@ import QuestionRenderer from './renderers/QuestionRenderer';
 import { useQuery } from 'convex/react';
 import { api } from '../../convex/_generated/api';
 import CreateQuestions from './renderers/CreateQuestions';
+import MultiplayerController from './multiplayer/MultiplayerController';
 
 interface QuestionSchema {
   question: string;
@@ -134,7 +135,13 @@ const GameController: React.FC = () => {
         )}
 
       {playFriendClicked && questions !== undefined && (
-        <div></div>
+        <div>
+          <MultiplayerController
+            loadQuestions={questions}
+            handleCorrectAnswerSelected={handleCorrectAnswerSelected}
+            handleNextQuestion={handleNextQuestion}
+          />
+        </div>
         // {/* // <MultiplayerController */}
         //   question={questions[currentQuestionIndex].question}
         //   options={questions[currentQuestionIndex].options}
