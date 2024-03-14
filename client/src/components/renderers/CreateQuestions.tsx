@@ -8,6 +8,8 @@ interface Question {
   correctAnswer: string;
 }
 
+const NO_RESULT_FOUND = 'No result found';
+
 const CreateQuestions = () => {
   const fetchRecentQuestions = useQuery(api.questions.getRecentQuestions);
   const insertQuestion = useMutation(api.questions.createQuestion);
@@ -16,6 +18,8 @@ const CreateQuestions = () => {
     enteredText: enteredText, // Using the entered text as a parameter
   });
   const [searchedQuestion, setSearchedQuestion] = useState<string>('');
+  const [searchedQuestionClicked, setSearchedQuestionClicked] =
+    useState<boolean>(false);
 
   const [question, setQuestion] = useState<string>('');
   const [options, setOptions] = useState<string[]>(['', '', '', '']);
@@ -39,7 +43,7 @@ const CreateQuestions = () => {
     if (fetchRelatedQuestion && fetchRelatedQuestion[0]) {
       setSearchedQuestion(fetchRelatedQuestion[0].question);
     } else {
-      setSearchedQuestion('No result found');
+      setSearchedQuestion(NO_RESULT_FOUND);
     }
   };
 
@@ -142,18 +146,53 @@ const CreateQuestions = () => {
               Submit
             </button>
           </div>
-          <h2>Search for a question that already exists</h2>
-          <input
-            type="text"
-            className="form-control mb-3"
-            placeholder="Enter text"
-            value={enteredText}
-            onChange={(e) => {
-              setEnteredText(e.target.value);
-              handleSearchQuestion();
-            }}
-          />
-          <p>{searchedQuestion}</p>
+          <div className="recent-questions-container">
+            <h2 className="mb-4">Search for a question that already exists</h2>
+            <input
+              type="text"
+              className="form-control mb-3"
+              placeholder="Enter text"
+              value={enteredText}
+              onChange={(e) => {
+                setEnteredText(e.target.value);
+                handleSearchQuestion();
+              }}
+            />
+
+            <div
+              className="question-item border rounded p-3 shadow-sm"
+              onClick={() =>
+                setSearchedQuestionClicked(!searchedQuestionClicked)
+              }
+            >
+              <h3 className="mb-3" style={{ wordWrap: 'break-word' }}>
+                {searchedQuestion}
+              </h3>
+
+              {searchedQuestionClicked && (
+                <div>
+                  {fetchRelatedQuestion &&
+                    fetchRelatedQuestion[0] &&
+                    searchedQuestion !== NO_RESULT_FOUND && (
+                      <>
+                        <p className="mb-2">Options:</p>
+                        <ul className="list-unstyled mb-3">
+                          {fetchRelatedQuestion[0].options.map(
+                            (option, optionIndex) => (
+                              <li key={optionIndex}>{option}</li>
+                            )
+                          )}
+                        </ul>
+                        <p className="mb-0">
+                          Correct Answer:{' '}
+                          {fetchRelatedQuestion[0].correctAnswer}
+                        </p>
+                      </>
+                    )}
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </div>
