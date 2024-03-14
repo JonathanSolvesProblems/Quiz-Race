@@ -5,7 +5,15 @@ interface Props {
 }
 
 const PlayFriend: React.FC<Props> = ({ onClick }: Props) => {
-  return <button onClick={onClick}>PlayFriend</button>;
+  return (
+    <button
+      className="btn btn-primary ms-2"
+      style={{ marginTop: '10px' }}
+      onClick={onClick}
+    >
+      Play Friend
+    </button>
+  );
 };
 
 export default PlayFriend;

@@ -1,4 +1,3 @@
-// GameController.tsx
 import React, { useState, useEffect } from 'react';
 import PlayBot from './renderers/PlayBot';
 import PlayFriend from './renderers/PlayFriend';
@@ -103,17 +102,21 @@ const GameController: React.FC = () => {
   };
 
   return (
-    <div>
+    <div className="container mt-5">
       <h1>Quiz Race</h1>
       {!playBotClicked &&
         !playFriendClicked &&
         !playSoloClicked &&
         !createQuestionsClicked && (
-          <div>
+          <div className="row">
             <PlaySolo onClick={handlePlaySoloClick} />
             <PlayBot onClick={handlePlayBotClick} />
             <PlayFriend onClick={handlePlayFriendClick} />
-            <button onClick={handleCreateQuestionsClicked}>
+            <button
+              className="btn btn-primary ms-2"
+              style={{ marginTop: '10px' }}
+              onClick={handleCreateQuestionsClicked}
+            >
               Create Questions
             </button>
           </div>
@@ -130,7 +133,12 @@ const GameController: React.FC = () => {
               correctAnswer={questions[currentQuestionIndex].correctAnswer}
               onCorrectAnswerSelected={handleCorrectAnswerSelected}
             />
-            <button onClick={handleNextQuestion}>Next Question</button>
+            <button
+              className="btn btn-primary ms-2"
+              onClick={handleNextQuestion}
+            >
+              Next Question
+            </button>
           </div>
         )}
 
@@ -142,19 +150,14 @@ const GameController: React.FC = () => {
             handleNextQuestion={handleNextQuestion}
           />
         </div>
-        // {/* // <MultiplayerController */}
-        //   question={questions[currentQuestionIndex].question}
-        //   options={questions[currentQuestionIndex].options}
-        //   correctAnswer={questions[currentQuestionIndex].correctAnswer}
-        //   onCorrectAnswerSelected={handleCorrectAnswerSelected}
-        // />
       )}
+
       {winner && questions !== undefined && (
         <div>
           <p>
             You Win! Percentage of correct answers: $
             {((correctAnswersCount / questions.length) * 100).toFixed(2)}%
-          </p>{' '}
+          </p>
         </div>
       )}
 

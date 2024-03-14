@@ -5,7 +5,15 @@ interface Props {
 }
 
 const PlayBot: React.FC<Props> = ({ onClick }: Props) => {
-  return <button onClick={onClick}>Play Bot</button>;
+  return (
+    <button
+      className="btn btn-primary ms-2"
+      style={{ marginTop: '10px' }}
+      onClick={onClick}
+    >
+      Play Bot
+    </button>
+  );
 };
 
 export default PlayBot;

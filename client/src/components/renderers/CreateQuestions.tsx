@@ -11,6 +11,11 @@ interface Question {
 const CreateQuestions = () => {
   const fetchRecentQuestions = useQuery(api.questions.getRecentQuestions);
   const insertQuestion = useMutation(api.questions.createQuestion);
+  const [enteredText, setEnteredText] = useState<string>(''); // State to store the entered text
+  const fetchRelatedQuestion = useQuery(api.questions.closestSimilarQuestion, {
+    enteredText: enteredText, // Using the entered text as a parameter
+  });
+  const [searchedQuestion, setSearchedQuestion] = useState<string>('');
 
   const [question, setQuestion] = useState<string>('');
   const [options, setOptions] = useState<string[]>(['', '', '', '']);
@@ -28,6 +33,14 @@ const CreateQuestions = () => {
     const newOptions = [...options];
     newOptions[index] = value;
     setOptions(newOptions);
+  };
+
+  const handleSearchQuestion = async () => {
+    if (fetchRelatedQuestion && fetchRelatedQuestion[0]) {
+      setSearchedQuestion(fetchRelatedQuestion[0].question);
+    } else {
+      setSearchedQuestion('No result found');
+    }
   };
 
   const handleSubmit = async () => {
@@ -62,52 +75,86 @@ const CreateQuestions = () => {
   };
 
   return (
-    <div>
-      <h2>Create Your Own Questions</h2>
-      <input
-        type="text"
-        placeholder="Enter question"
-        value={question}
-        onChange={(e) => setQuestion(e.target.value)}
-      />
-      {options.map((option, index) => (
-        <input
-          key={index}
-          type="text"
-          placeholder={`Option ${index + 1}`}
-          value={option}
-          onChange={(e) => handleOptionChange(index, e.target.value)}
-        />
-      ))}
-      <input
-        type="text"
-        placeholder="Enter correct answer"
-        value={correctAnswer}
-        onChange={(e) => setCorrectAnswer(e.target.value)}
-      />
-      <button onClick={handleSubmit}>Submit</button>
-      <div className="recent-questions-container">
-        <h2>Recent Questions</h2>
-        {recentQuestions.map((question, index) => (
-          <div
-            key={index}
-            className="question-item"
-            onClick={() => handleQuestionClick(index)}
-          >
-            <h3>{question.question}</h3>
-            {selectedQuestionIndex === index && (
-              <div>
-                <p>Options:</p>
-                <ul>
-                  {question.options.map((option, optionIndex) => (
-                    <li key={optionIndex}>{option}</li>
-                  ))}
-                </ul>
-                <p>Correct Answer: {question.correctAnswer}</p>
+    <div className="container mt-5">
+      <div className="row">
+        <div className="col-md-4">
+          <div className="recent-questions-container">
+            <h2 className="mb-4">Recent Questions</h2>
+            {recentQuestions.map((question, index) => (
+              <div key={index} className="mb-4">
+                <div
+                  className="question-item border rounded p-3 shadow-sm"
+                  onClick={() => handleQuestionClick(index)}
+                >
+                  <h3 className="mb-3" style={{ wordWrap: 'break-word' }}>
+                    {question.question}
+                  </h3>
+                  {selectedQuestionIndex === index && (
+                    <div>
+                      <p className="mb-2">Options:</p>
+                      <ul className="list-unstyled mb-3">
+                        {question.options.map((option, optionIndex) => (
+                          <li key={optionIndex}>{option}</li>
+                        ))}
+                      </ul>
+                      <p className="mb-0">
+                        Correct Answer: {question.correctAnswer}
+                      </p>
+                    </div>
+                  )}
+                </div>
               </div>
-            )}
+            ))}
           </div>
-        ))}
+        </div>
+        <div className="col-md-8">
+          <div className="create-questions">
+            <h2>Create Your Own Questions</h2>
+            <input
+              type="text"
+              className="form-control mb-3"
+              placeholder="Enter question"
+              value={question}
+              onChange={(e) => setQuestion(e.target.value)}
+            />
+            {options.map((option, index) => (
+              <input
+                key={index}
+                type="text"
+                className="form-control mb-3"
+                placeholder={`Option ${index + 1}`}
+                value={option}
+                onChange={(e) => handleOptionChange(index, e.target.value)}
+              />
+            ))}
+            <input
+              type="text"
+              className="form-control mb-3"
+              placeholder="Enter correct answer"
+              value={correctAnswer}
+              onChange={(e) => setCorrectAnswer(e.target.value)}
+            />
+            <button
+              className="btn btn-primary mb-3"
+              onClick={handleSubmit}
+              disabled={!question || options.some((option) => !option)}
+            >
+              Submit
+            </button>
+          </div>
+          <h2>Search for a question that already exists</h2>
+          <input
+            type="text"
+            className="form-control mb-3"
+            placeholder="Enter text"
+            value={enteredText}
+            onChange={(e) => {
+              setEnteredText(e.target.value);
+              handleSearchQuestion();
+            }}
+          />
+          <p>{searchedQuestion}</p>
+        </div>
       </div>
     </div>
   );

@@ -6,6 +6,8 @@ export default defineSchema({
     question: v.string(),
     options: v.array(v.string()),
     correctAnswer: v.string()
+  }).searchIndex("search_question", {
+    searchField: "question",
   }),
 
   rooms: defineTable({

@@ -1,4 +1,3 @@
-// QuestionRenderer.tsx
 import React, { useState } from 'react';
 
 interface QuestionRendererProps {
@@ -24,12 +23,12 @@ const QuestionRenderer: React.FC<QuestionRendererProps> = ({
   };
 
   return (
-    <div>
-      <h2>{question}</h2>
-      <ul>
+    <div className="question-container">
+      <h2 className="question">{question}</h2>
+      <ul className="options-list">
         {options.map((option, index) => (
           <li key={index}>
-            <label>
+            <label className="option-label">
               <input
                 type="radio"
                 name="answer"

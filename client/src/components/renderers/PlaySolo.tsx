@@ -5,7 +5,15 @@ interface Props {
 }
 
 const PlaySolo: React.FC<Props> = ({ onClick }: Props) => {
-  return <button onClick={onClick}>Play Solo</button>;
+  return (
+    <button
+      className="btn btn-primary ms-2"
+      style={{ marginTop: '10px' }}
+      onClick={onClick}
+    >
+      Play Solo
+    </button>
+  );
 };
 
 export default PlaySolo;
