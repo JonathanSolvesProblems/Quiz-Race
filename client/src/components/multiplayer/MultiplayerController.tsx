@@ -27,8 +27,8 @@ const MultiplayerController = ({
   //   id: waitingRoomQuery._id,
   // });
 
-  const [updateRoom, setUpdateRoom] = useState<boolean>(false);
   const [clientReady, setClientReady] = useState<boolean>(false);
+  const [isGameReady, setIsGameReady] = useState<boolean>(false);
 
   // useEffect(() => {
   //   if (waitingRoomQuery && updateRoom) {
@@ -59,15 +59,12 @@ const MultiplayerController = ({
 
   const joinRoom = async () => {
     try {
+      let gameReady;
+
       if (waitingRoomQuery) {
-        const updatedRoom = await updateRoomCapacity({
+        gameReady = await updateRoomCapacity({
           id: waitingRoomQuery._id,
         });
-
-        setQuestions(waitingRoomQuery.questions);
-        setOptions(waitingRoomQuery.options);
-        setCorrectAnswers(waitingRoomQuery.correctAnswers);
-        console.log('capacity ' + waitingRoomQuery.capacity);
       } else {
         const newRoom = {
           player1_score,
@@ -78,13 +75,26 @@ const MultiplayerController = ({
         };
 
         createRoom(newRoom);
-        setUpdateRoom(false);
+        setPlayerWaiting(true);
+      }
+
+      if (gameReady) {
+        setQuestions(gameReady.questions);
+        setOptions(gameReady.options);
+        setCorrectAnswers(gameReady.correctAnswers);
+        const startGame = gameReady.player1Ready && gameReady.player2Ready;
+        setIsGameReady(startGame);
+        setPlayerWaiting(!startGame);
       }
     } catch (error) {
       console.log(`Error creating the room: ${error}`);
       throw error;
     }
   };
+
+  useEffect(() => {
+    setClientReady(isGameReady);
+  }, [isGameReady]);
 
   useEffect(() => {
     if (loadQuestions) {
@@ -109,7 +119,7 @@ const MultiplayerController = ({
 
   return (
     <div>
-      {!clientReady ? (
+      {!clientReady && !playerWaiting ? (
         <div className="chat-styling">
           <h3>Join Chat</h3>
           <input
@@ -132,7 +142,7 @@ const MultiplayerController = ({
         </div>
       ) : playerWaiting ? (
         <div>
-          <p>{playerWaiting}</p>
+          <p>"Waiting for player to join...</p>
         </div>
       ) : (
         <div>
@@ -143,13 +153,6 @@ const MultiplayerController = ({
             onCorrectAnswerSelected={handleCorrectAnswerSelected}
           />
           <button onClick={handleNextQuestion}>Next Question</button>
-          {/* <QuestionsMultiplayer
-            socket={socket}
-            username={username}
-            room={room}
-            questionContent={props}
-          /> */}
-          {/* <Chat socket={socket} username={username} room={room} /> */}
         </div>
       )}
     </div>
