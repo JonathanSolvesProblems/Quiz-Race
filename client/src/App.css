@@ -41,198 +41,63 @@
   color: #888;
 }
 
-/* Chat */
-/* 
-.App {
-  width: 100vw;
-  height: 100vh;
-  background: #fff;
-  color: #212121;
-  font-family: "Open Sans", sans-serif;
-  display: grid;
-  place-items: center;
-} */
-/* body {
-  margin: 0%;
-  padding: 0%;
-} */
-/* @import url("https://fonts.googleapis.com/css?family=Open+Sans:300,400,700"); */
+/* Question Renderer */
 
-chat-styling {
-  display: flex;
-  flex-direction: column;
-  text-align: center;
-}
-
-chat-styling h3 {
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
-}
-chat-styling input {
-  width: 210px;
-  height: 40px;
-  margin: 7px;
-  border: 2px solid #43a047;
+.question-container {
+  border: 1px solid #ccc;
   border-radius: 5px;
-  padding: 5px;
-  font-size: 16px;
+  padding: 20px;
+  margin-bottom: 20px;
 }
 
-chat-styling button {
-  width: 225px;
-  height: 50px;
-  margin: 7px;
-  border: none;
-  border-radius: 5px;
-  padding: 5px;
-  font-size: 16px;
-  background: #43a047;
-  color: #fff;
-  cursor: pointer;
+.question {
+  font-size: 1.2em;
+  margin-bottom: 10px;
 }
 
-chat-styling button:hover {
-  background: #2e7d32;
+.options-list {
+  list-style-type: none;
+  padding: 0;
 }
 
-.chat-window {
-  width: 300px;
-  height: 420px;
-}
-
-.chat-window p {
-  margin: 0;
-}
-.chat-window .chat-top {
-  height: 45px;
-  border-radius: 6px;
-  background: #263238;
-  position: relative;
-  cursor: pointer;
-}
-.chat-window .chat-top p {
+.option-label {
   display: block;
-  padding: 0 1em 0 2em;
-  color: #fff;
-  font-weight: 700;
-  line-height: 45px;
+  margin-bottom: 10px;
 }
 
-.chat-window .chat-main {
-  height: calc(450px - (45px + 70px));
-  border: 1px solid #263238;
-  background: #fff;
-
-  position: relative;
+.option-label input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none; /* Disable pointer events on the hidden radio button */
 }
-.chat-window .chat-main .message-container {
+
+.option-label .option-button {
+  position: relative; /* Position relative to create stacking context */
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.option-label .option-button:hover {
+  background-color: #e0e0e0;
+}
+
+.option-label input[type="radio"]:checked + .option-button::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
-  overflow-y: scroll;
-  overflow-x: hidden;
-}
-
-.chat-window .chat-main .message-container::-webkit-scrollbar {
-  display: none;
-}
-.chat-window .chat-main .message {
-  height: auto;
-  padding: 10px;
-  display: flex;
-}
-
-.chat-window .chat-main .message .message-content {
-  width: auto;
-  height: auto;
-  min-height: 40px;
-  max-width: 120px;
-  background-color: #43a047;
+  background-color: rgba(0, 123, 255, 0.1); /* Adjust the color and opacity as needed */
   border-radius: 5px;
-  color: white;
-  display: flex;
-  align-items: center;
-  margin-right: 5px;
-  margin-left: 5px;
-  padding-right: 5px;
-  padding-left: 5px;
-  overflow-wrap: break-word;
-  word-break: break-word;
 }
 
-#you {
-  justify-content: flex-start;
+.option-label .option-button.selected {
+  background-color: #007bff;
+  color: #fff;
+  border-color: #007bff;
 }
-
-#you .message-content {
-  justify-content: flex-start;
-}
-
-#you .message-meta {
-  justify-content: flex-start;
-  margin-left: 5px;
-}
-
-#other {
-  justify-content: flex-end;
-}
-
-#other .message-content {
-  justify-content: flex-end;
-  background-color: cornflowerblue;
-}
-
-#other .message-meta {
-  justify-content: flex-end;
-  margin-right: 5px;
-}
-
-.message-meta #author {
-  margin-left: 10px;
-  font-weight: bold;
-}
-
-.chat-window .chat-main .message .message-meta {
-  display: flex;
-  font-size: 12px;
-}
-
-.chat-window .chat-bottom {
-  height: 40px;
-  border: 1px solid #263238;
-  border-top: none;
-  display: flex;
-}
-
-.chat-window .chat-bottom input {
-  height: 100%;
-  flex: 85%;
-  border: 0;
-  padding: 0 0.7em;
-  font-size: 1em;
-  border-right: 1px dotted #607d8b;
-
-  outline: none;
-  font-family: "Open Sans", sans-serif;
-}
-
-.chat-window .chat-bottom button {
-  border: 0;
-  display: grid;
-  place-items: center;
-  cursor: pointer;
-  flex: 15%;
-  height: 100%;
-  background: transparent;
-  outline: none;
-  font-size: 25px;
-  color: lightgray;
-}
-
-.chat-window .chat-bottom button:hover {
-  color: #43a047;
-}
-.hide {
-  opacity: 0 !important;
-}
-
-/* Chat */

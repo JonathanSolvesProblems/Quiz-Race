@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface QuestionRendererProps {
   question: string;
@@ -15,11 +15,15 @@ const QuestionRenderer: React.FC<QuestionRendererProps> = ({
 }) => {
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
 
-  const handleAnswerSelect = (option: string) => {
-    setSelectedAnswer(option);
-    if (option === correctAnswer) {
+  useEffect(() => {
+    // Check if the selected answer matches the correct answer
+    if (selectedAnswer === correctAnswer) {
       onCorrectAnswerSelected();
     }
+  }, [selectedAnswer, correctAnswer, onCorrectAnswerSelected]);
+
+  const handleAnswerSelect = (option: string) => {
+    setSelectedAnswer(option);
   };
 
   return (
@@ -36,7 +40,7 @@ const QuestionRenderer: React.FC<QuestionRendererProps> = ({
                 checked={option === selectedAnswer}
                 onChange={() => handleAnswerSelect(option)}
               />
-              {option}
+              <div className="option-button">{option}</div>
             </label>
           </li>
         ))}

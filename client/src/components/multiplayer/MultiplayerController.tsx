@@ -60,15 +60,14 @@ const MultiplayerController = ({
   const joinRoom = async () => {
     try {
       if (waitingRoomQuery) {
-        await updateRoomCapacity({
+        const updatedRoom = await updateRoomCapacity({
           id: waitingRoomQuery._id,
         });
 
         setQuestions(waitingRoomQuery.questions);
         setOptions(waitingRoomQuery.options);
         setCorrectAnswers(waitingRoomQuery.correctAnswers);
-        console.log(waitingRoomQuery.player1Ready);
-        console.log(waitingRoomQuery.player2Ready);
+        console.log('capacity ' + waitingRoomQuery.capacity);
       } else {
         const newRoom = {
           player1_score,

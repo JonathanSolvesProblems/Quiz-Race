@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import PlayBot from './renderers/PlayBot';
 import PlayFriend from './renderers/PlayFriend';
 import PlaySolo from './renderers/PlaySolo';
@@ -15,12 +15,11 @@ interface QuestionSchema {
 }
 
 const GameController: React.FC = () => {
-  const [playBotClicked, setPlayBotClicked] = useState<boolean>(false);
-  const [playFriendClicked, setPlayFriendClicked] = useState<boolean>(false);
-  const [playSoloClicked, setPlaySoloClicked] = useState<boolean>(false);
-  const [createQuestionsClicked, setCreateQuestionsClicked] =
-    useState<boolean>(false);
-  const [questions, setQuestions] = useState<QuestionSchema[]>();
+  const [playBotClicked, setPlayBotClicked] = useState(false);
+  const [playFriendClicked, setPlayFriendClicked] = useState(false);
+  const [playSoloClicked, setPlaySoloClicked] = useState(false);
+  const [createQuestionsClicked, setCreateQuestionsClicked] = useState(false);
+  const [questions, setQuestions] = useState<QuestionSchema[]>([]);
   const questionTable = useQuery(api.questions.getRecentQuestions);
 
   useEffect(() => {
@@ -36,56 +35,9 @@ const GameController: React.FC = () => {
     }
   }, [questionTable]);
 
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
-  const [correctAnswersCount, setCorrectAnswersCount] = useState<number>(0);
-  const [winner, setWinner] = useState<boolean>(false);
-
-  const handlePlaySoloClick = () => {
-    setPlaySoloClicked(true);
-    setPlayBotClicked(false);
-    setPlayFriendClicked(false);
-    setCreateQuestionsClicked(false);
-    if (questions !== undefined) setQuestions(shuffleArray(questions));
-  };
-
-  const handlePlayBotClick = () => {
-    setPlayBotClicked(true);
-    setPlayFriendClicked(false);
-    setPlaySoloClicked(false);
-    setCreateQuestionsClicked(false);
-    if (questions !== undefined) setQuestions(shuffleArray(questions));
-  };
-
-  const handlePlayFriendClick = () => {
-    setPlayFriendClicked(true);
-    setPlayBotClicked(false);
-    setPlaySoloClicked(false);
-    setCreateQuestionsClicked(false);
-    if (questions !== undefined) {
-      setQuestions(shuffleArray(questions));
-    }
-  };
-
-  const handleCreateQuestionsClicked = () => {
-    setCreateQuestionsClicked(true);
-    setPlayFriendClicked(false);
-    setPlayBotClicked(false);
-    setPlaySoloClicked(false);
-  };
-
-  const handleCorrectAnswerSelected = () => {
-    setCorrectAnswersCount(correctAnswersCount + 1);
-  };
-
-  const handleNextQuestion = () => {
-    if (questions !== undefined) {
-      if (currentQuestionIndex < questions.length - 1) {
-        setCurrentQuestionIndex(currentQuestionIndex + 1);
-      } else {
-        setWinner(true);
-      }
-    }
-  };
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [correctAnswersCount, setCorrectAnswersCount] = useState(0);
+  const [winner, setWinner] = useState(false);
 
   const shuffleArray = (array: QuestionSchema[]) => {
     const shuffledArray = [...array];
@@ -96,9 +48,34 @@ const GameController: React.FC = () => {
         shuffledArray[i],
       ];
     }
-
-    // Only display 5 questions per round
     return shuffledArray.slice(0, Math.min(5, shuffledArray.length));
+  };
+
+  const handlePlayClick = (type: string) => {
+    setPlayBotClicked(type === 'bot');
+    setPlayFriendClicked(type === 'friend');
+    setPlaySoloClicked(type === 'solo');
+    setCreateQuestionsClicked(false);
+    if (questions.length) setQuestions(shuffleArray(questions));
+  };
+
+  const handleCreateQuestionsClicked = () => {
+    setCreateQuestionsClicked(true);
+    setPlayFriendClicked(false);
+    setPlayBotClicked(false);
+    setPlaySoloClicked(false);
+  };
+
+  const handleCorrectAnswerSelected = useCallback(() => {
+    setCorrectAnswersCount((prevCount) => prevCount + 1);
+  }, []);
+
+  const handleNextQuestion = () => {
+    if (currentQuestionIndex < questions.length - 1) {
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
+    } else {
+      setWinner(true);
+    }
   };
 
   return (
@@ -109,9 +86,9 @@ const GameController: React.FC = () => {
         !playSoloClicked &&
         !createQuestionsClicked && (
           <div className="row">
-            <PlaySolo onClick={handlePlaySoloClick} />
-            <PlayBot onClick={handlePlayBotClick} />
-            <PlayFriend onClick={handlePlayFriendClick} />
+            <PlaySolo onClick={() => handlePlayClick('solo')} />
+            <PlayBot onClick={() => handlePlayClick('bot')} />
+            <PlayFriend onClick={() => handlePlayClick('friend')} />
             <button
               className="btn btn-primary ms-2"
               style={{ marginTop: '10px' }}
@@ -124,7 +101,7 @@ const GameController: React.FC = () => {
 
       {playSoloClicked &&
         !winner &&
-        questions !== undefined &&
+        questions.length > 0 &&
         currentQuestionIndex < questions.length && (
           <div>
             <QuestionRenderer
@@ -142,7 +119,7 @@ const GameController: React.FC = () => {
           </div>
         )}
 
-      {playFriendClicked && questions !== undefined && (
+      {playFriendClicked && questions.length > 0 && (
         <div>
           <MultiplayerController
             loadQuestions={questions}
@@ -152,7 +129,7 @@ const GameController: React.FC = () => {
         </div>
       )}
 
-      {winner && questions !== undefined && (
+      {winner && questions.length > 0 && (
         <div>
           <p>
             You Win! Percentage of correct answers: $
