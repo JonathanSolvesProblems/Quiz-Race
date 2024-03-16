@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import PlayBot from './renderers/PlayBot';
+// import PlayBot from './renderers/PlayBot';
 import PlayFriend from './renderers/PlayFriend';
 import PlaySolo from './renderers/PlaySolo';
 import QuestionRenderer from './renderers/QuestionRenderer';
