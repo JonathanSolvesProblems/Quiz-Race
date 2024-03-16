@@ -87,7 +87,7 @@ const GameController: React.FC = () => {
         !createQuestionsClicked && (
           <div className="row">
             <PlaySolo onClick={() => handlePlayClick('solo')} />
-            <PlayBot onClick={() => handlePlayClick('bot')} />
+            {/* <PlayBot onClick={() => handlePlayClick('bot')} /> */}
             <PlayFriend onClick={() => handlePlayClick('friend')} />
             <button
               className="btn btn-primary ms-2"
@@ -132,8 +132,21 @@ const GameController: React.FC = () => {
       {winner && questions.length > 0 && (
         <div>
           <p>
-            You Win! Percentage of correct answers: $
-            {((correctAnswersCount / questions.length) * 100).toFixed(2)}%
+            {(correctAnswersCount / questions.length) * 100 >= 60 ? (
+              <>
+                You Win! Percentage of correct answers:{' '}
+                <span>
+                  {((correctAnswersCount / questions.length) * 100).toFixed(2)}%
+                </span>
+              </>
+            ) : (
+              <>
+                You Lose! Percentage of correct answers:{' '}
+                <span>
+                  {((correctAnswersCount / questions.length) * 100).toFixed(2)}%
+                </span>
+              </>
+            )}
           </p>
         </div>
       )}

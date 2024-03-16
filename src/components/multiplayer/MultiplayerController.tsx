@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import QuestionRenderer from '../renderers/QuestionRenderer';
+import QuestionRenderer from '../renderers/QuestionRenderer'; // Assuming correct path to QuestionRenderer component
 import { useMutation, useQuery } from 'convex/react';
 import { api } from '../../../convex/_generated/api';
 
 interface Props {
-  question: string;
-  options: string[];
-  correctAnswer: string;
-  onCorrectAnswerSelected: () => void;
+  loadQuestions: QuestionSchema[];
+  handleCorrectAnswerSelected: () => void;
+  handleNextQuestion: () => void;
 }
 
 interface QuestionSchema {
@@ -16,7 +15,7 @@ interface QuestionSchema {
   correctAnswer: string;
 }
 
-const MultiplayerController = ({
+const MultiplayerController: React.FC<Props> = ({
   loadQuestions,
   handleCorrectAnswerSelected,
   handleNextQuestion,
@@ -26,7 +25,6 @@ const MultiplayerController = ({
   const getPlayerID = useQuery(api.players.getPlayerID);
   const [clientReady, setClientReady] = useState<boolean>(false);
   const [isGameReady, setIsGameReady] = useState<boolean>(false);
-
   const updateRoomCapacity = useMutation(api.rooms.updateRoomCapacity);
   const playerInSameRoom = useMutation(api.rooms.checkIfPlayerInSameRoom);
   const [questions, setQuestions] = useState<string[]>([]);
@@ -35,8 +33,6 @@ const MultiplayerController = ({
   const [player1_score, setPlayer1Score] = useState<number>(0);
   const [player2_score, setPlayer2Score] = useState<number>(0);
   const [username, setUsername] = useState('');
-  const [room, setRoom] = useState('');
-  const [startGame, setStartGame] = useState<boolean>(false);
   const [playerWaiting, setPlayerWaiting] = useState<boolean>(false);
   const [inSameRoom, setInSameRoom] = useState<boolean>(false);
 
@@ -59,6 +55,7 @@ const MultiplayerController = ({
         gameReady = await updateRoomCapacity({
           id: waitingRoomQuery._id,
         });
+        setPlayerWaiting(false);
       } else {
         const newRoom = {
           player1_score,
@@ -66,23 +63,11 @@ const MultiplayerController = ({
           questions,
           options,
           correctAnswers,
+          username,
         };
 
         createRoom(newRoom);
         setPlayerWaiting(true);
-      }
-
-      if (waitingRoomQuery && getPlayerID) {
-        const isPlayerInTheSameRoom = await playerInSameRoom({
-          id: getPlayerID,
-        });
-
-        if (isPlayerInTheSameRoom) {
-          const notifyClientsGameReady = checkGameReadyState(gameReady);
-          setIsGameReady(notifyClientsGameReady);
-          setPlayerWaiting(!notifyClientsGameReady);
-          setInSameRoom(true);
-        }
       }
     } catch (error) {
       console.log(`Error creating the room: ${error}`);
@@ -123,42 +108,66 @@ const MultiplayerController = ({
     }
   }, [gameReady]);
 
+  useEffect(() => {
+    const checkPlayerRoom = async () => {
+      try {
+        if (waitingRoomQuery && getPlayerID) {
+          const isPlayerInTheSameRoom = await playerInSameRoom({
+            id: getPlayerID,
+          });
+
+          if (isPlayerInTheSameRoom) {
+            const notifyClientsGameReady = checkGameReadyState(gameReady);
+            setIsGameReady(notifyClientsGameReady);
+            setPlayerWaiting(!notifyClientsGameReady);
+            setInSameRoom(notifyClientsGameReady);
+          }
+        }
+      } catch (error) {
+        console.error('Error checking player room:', error);
+      }
+    };
+
+    checkPlayerRoom();
+  }, [playerWaiting, waitingRoomQuery, gameReady]);
+
   return (
     <div>
       {!clientReady && !playerWaiting ? (
-        <div className="chat-styling">
-          <h3>Join Chat</h3>
+        <div className="join-room-container">
           <input
+            className="join-room-input"
             type="text"
             placeholder="Enter name"
             onChange={(event) => {
               setUsername(event.target.value);
-            }}
-          />
-          <input
-            type="text"
-            placeholder="Room ID"
-            onChange={(event) => {
-              setRoom(event.target.value);
               setPlayer1Score(0);
               setPlayer2Score(0);
             }}
           />
-          <button onClick={joinRoom}>Join a Room</button>
+          <button
+            className={`join-room-button ${!username ? 'disabled' : ''}`}
+            onClick={joinRoom}
+            disabled={!username}
+          >
+            Enter Game
+          </button>
         </div>
       ) : playerWaiting ? (
-        <div>
-          <p>"Waiting for player to join...</p>
+        <div className="waiting-room-container">
+          <p className="waiting-message">Waiting for player to join...</p>
         </div>
       ) : (
-        <div>
+        <div className="question-container">
           <QuestionRenderer
             question={questions[0]}
             options={options[0]}
             correctAnswer={correctAnswers[0]}
             onCorrectAnswerSelected={handleCorrectAnswerSelected}
           />
-          <button onClick={handleNextQuestion}>Next Question</button>
+          <button className="next-question-button" onClick={handleNextQuestion}>
+            Next Question
+          </button>
         </div>
       )}
     </div>

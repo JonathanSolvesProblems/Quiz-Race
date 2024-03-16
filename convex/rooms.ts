@@ -1,11 +1,6 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
-
-enum GameStatus {
-  WaitingForPlayers = 'Waiting for players',
-  InProgress = 'In progress',
-  Completed = 'Completed',
-}
+import { GameStatus } from "./common";
 
 export const getRooms = query({
   args: {},
@@ -60,9 +55,9 @@ export const checkIfPlayerInSameRoom = mutation({
 });
 
 export const createRoom = mutation({
-  args: { player1_score: v.number(), player2_score: v.number(), questions: v.array(v.string()), options: v.array(v.array(v.string())), correctAnswers: v.array(v.string()) },
+  args: { player1_score: v.number(), player2_score: v.number(), questions: v.array(v.string()), options: v.array(v.array(v.string())), correctAnswers: v.array(v.string()), username: v.string() },
   handler: async (ctx, args) => {
-    const player_id = await ctx.db.insert("players", {});
+    const player_id = await ctx.db.insert("players", { name: args.username });
     
     return await ctx.db.insert("rooms", { status: GameStatus.WaitingForPlayers, player1_score: args.player1_score, player2_score: args.player2_score, capacity: 1, questions: args.questions, options: args.options, correctAnswers: args.correctAnswers, player1Ready: true, player2Ready: false, playerID: player_id });  
   },
@@ -78,6 +73,3 @@ export const updateRoomCapacity = mutation({
     return updatedRoom;
   },
 })
-
-// Have a players table? When a player joins a room, keep track of them.
-// Then you can do a query

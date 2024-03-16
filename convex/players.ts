@@ -1,11 +1,14 @@
-import { query } from "./_generated/server";
+import { query, } from "./_generated/server";
+import { GameStatus } from "./common";
 
 export const getPlayerID = query({
   handler: async (ctx) => {
-    const room = await ctx.db.query("rooms").filter((q) => q.eq(q.field("player2Ready"), true)).first();
-  
+    const room = await ctx.db.query("rooms").filter((q) => q.and(q.eq(q.field("player2Ready"), false), q.eq(q.field("status"), GameStatus.InProgress))).first();
+    
     if (room) {
+      console.log(room.playerID);
       return room.playerID;
     }
   }
 })
+

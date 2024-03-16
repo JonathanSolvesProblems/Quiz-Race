@@ -14,6 +14,7 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
+import type * as common from "../common.js";
 import type * as httpActions from "../httpActions.js";
 import type * as players from "../players.js";
 import type * as questions from "../questions.js";
@@ -28,6 +29,7 @@ import type * as rooms from "../rooms.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  common: typeof common;
   httpActions: typeof httpActions;
   players: typeof players;
   questions: typeof questions;

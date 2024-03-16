@@ -11,6 +11,7 @@ export default defineSchema({
   }),
 
   players: defineTable({
+    name: v.string(),
   }),
   
   rooms: defineTable({
