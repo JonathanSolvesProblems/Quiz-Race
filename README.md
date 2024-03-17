@@ -38,7 +38,7 @@ Quiz Race is an engaging and interactive trivia game where players can test thei
   - **options:** An array of options associated with the question
   - **correctAnswer:** The correct answer of the question
   - **searchIndex:** Contains all players in the database
-- **Players:** Contains all questions in the database
+- **Players:** Contains all players in the database
   - **name:** Name of the player
 - **Rooms:** Contains all multiplayer rooms in the database
   - **status:** Status of the game state in the room
