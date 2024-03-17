@@ -7,14 +7,21 @@ interface QuestionRendererProps {
   onCorrectAnswerSelected: () => void;
 }
 
+/**
+ * The QuestionRenderer component renders a single trivia question with multiple options.
+ * It allows users to select an option and notifies the parent component when the correct
+ * answer is selected.
+ */
 const QuestionRenderer: React.FC<QuestionRendererProps> = ({
   question,
   options,
   correctAnswer,
   onCorrectAnswerSelected,
 }) => {
+  // tracks the selected answer
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
 
+  // Validates if the selected answer matches the correct answer of the question
   useEffect(() => {
     // Check if the selected answer matches the correct answer
     if (selectedAnswer === correctAnswer) {
@@ -22,10 +29,12 @@ const QuestionRenderer: React.FC<QuestionRendererProps> = ({
     }
   }, [selectedAnswer, correctAnswer, onCorrectAnswerSelected]);
 
+  // Sets the selected answer
   const handleAnswerSelect = (option: string) => {
     setSelectedAnswer(option);
   };
 
+  // Renders the question and options
   return (
     <div className="question-container">
       <h2 className="question">{question}</h2>

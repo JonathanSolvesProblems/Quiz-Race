@@ -4,6 +4,11 @@ interface Props {
   onClick: () => void;
 }
 
+/**
+ * The PlayBot component represents a button for initiating gameplay against a bot.
+ * It triggers the provided onClick function when clicked.
+ * Currently not being used, but to be introduced when AI functionalities incorporated into application.
+ */
 const PlayBot: React.FC<Props> = ({ onClick }: Props) => {
   return (
     <button

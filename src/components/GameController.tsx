@@ -8,13 +8,21 @@ import { api } from '../../convex/_generated/api';
 import CreateQuestions from './renderers/CreateQuestions';
 import MultiplayerController from './multiplayer/MultiplayerController';
 
+// Define the structure of a single trivia question
 interface QuestionSchema {
   question: string;
   options: string[];
   correctAnswer: string;
 }
 
+/**
+ * The GameController component manages the gameplay logic for Quiz Race.
+ * It handles rendering different game modes, fetching questions from the database,
+ * shuffling and displaying questions, managing user interactions, and determining
+ * the winner of the game.
+ */
 const GameController: React.FC = () => {
+  // State variables to manage different game modes and game state
   const [playBotClicked, setPlayBotClicked] = useState(false);
   const [playFriendClicked, setPlayFriendClicked] = useState(false);
   const [playSoloClicked, setPlaySoloClicked] = useState(false);
@@ -22,6 +30,7 @@ const GameController: React.FC = () => {
   const [questions, setQuestions] = useState<QuestionSchema[]>([]);
   const questionTable = useQuery(api.questions.getRecentQuestions);
 
+  // Fetch and set questions from the database when component mounts or questionTable updates
   useEffect(() => {
     if (questionTable) {
       const mappedData = questionTable.map(
@@ -35,10 +44,12 @@ const GameController: React.FC = () => {
     }
   }, [questionTable]);
 
+  // State variables to track current question index, correct answers count, and winner status
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [correctAnswersCount, setCorrectAnswersCount] = useState(0);
   const [winner, setWinner] = useState(false);
 
+  // Function to shuffle an array of questions
   const shuffleArray = (array: QuestionSchema[]) => {
     const shuffledArray = [...array];
     for (let i = shuffledArray.length - 1; i > 0; i--) {
@@ -51,6 +62,7 @@ const GameController: React.FC = () => {
     return shuffledArray.slice(0, Math.min(5, shuffledArray.length));
   };
 
+  // Handle click event when user selects a game mode
   const handlePlayClick = (type: string) => {
     setPlayBotClicked(type === 'bot');
     setPlayFriendClicked(type === 'friend');
@@ -59,6 +71,7 @@ const GameController: React.FC = () => {
     if (questions.length) setQuestions(shuffleArray(questions));
   };
 
+  // Handle click event when user selects to create questions
   const handleCreateQuestionsClicked = () => {
     setCreateQuestionsClicked(true);
     setPlayFriendClicked(false);
@@ -66,10 +79,12 @@ const GameController: React.FC = () => {
     setPlaySoloClicked(false);
   };
 
+  // Callback function to handle correct answer selection
   const handleCorrectAnswerSelected = useCallback(() => {
     setCorrectAnswersCount((prevCount) => prevCount + 1);
   }, []);
 
+  // Function to handle moving to the next question
   const handleNextQuestion = () => {
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
@@ -78,6 +93,7 @@ const GameController: React.FC = () => {
     }
   };
 
+  // Render the game components based on the game mode and game state
   return (
     <div className="container mt-5">
       <h1>Quiz Race</h1>

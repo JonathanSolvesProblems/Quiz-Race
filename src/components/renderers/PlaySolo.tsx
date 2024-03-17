@@ -4,6 +4,10 @@ interface Props {
   onClick: () => void;
 }
 
+/**
+ * The PlaySolo component represents a button for initiating solo gameplay.
+ * It triggers the provided onClick function when clicked.
+ */
 const PlaySolo: React.FC<Props> = ({ onClick }: Props) => {
   return (
     <button

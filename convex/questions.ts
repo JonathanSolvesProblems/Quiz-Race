@@ -1,6 +1,7 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
 
+// Retrieve all questions
 export const get = query({
   args: {},
   handler: async (ctx) => {
@@ -8,6 +9,7 @@ export const get = query({
   },
 });
 
+// Creates a new question
 export const createQuestion = mutation({
   args: { question: v.string(), options: v.array(v.string()), correctAnswer: v.string() },
   handler: async (ctx, args) => {
@@ -15,6 +17,7 @@ export const createQuestion = mutation({
   },
 });
 
+// Retrieves the most recent questions
 export const getRecentQuestions = query({
   args: {},
   handler: async (ctx) => {
@@ -22,6 +25,7 @@ export const getRecentQuestions = query({
   },
 });
 
+// Finds the closest similar question to the entered text
 export const closestSimilarQuestion = query({
   args: { enteredText: v.string() },
   handler: async (ctx, args) => {

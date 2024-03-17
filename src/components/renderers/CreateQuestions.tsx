@@ -10,7 +10,14 @@ interface Question {
 
 const NO_RESULT_FOUND = 'No result found';
 
+/**
+ * The CreateQuestions component allows users to create their own trivia questions,
+ * submit them to the database, and search for existing questions.
+ * It also displays recent questions from the database for reference.
+ */
 const CreateQuestions = () => {
+  // Hooks for fetching recent questions and inserting new questions, as well as
+  // state variables for manager user inputs and fetched data
   const fetchRecentQuestions = useQuery(api.questions.getRecentQuestions);
   const insertQuestion = useMutation(api.questions.createQuestion);
   const [enteredText, setEnteredText] = useState<string>(''); // State to store the entered text
@@ -29,16 +36,19 @@ const CreateQuestions = () => {
     number | null
   >(null);
 
+  // Updates state variable with most recent question from the database
   useEffect(() => {
     setRecentQuestions(fetchRecentQuestions || []);
   }, [fetchRecentQuestions]);
 
+  // Handles changes into the option state variable
   const handleOptionChange = (index: number, value: string) => {
     const newOptions = [...options];
     newOptions[index] = value;
     setOptions(newOptions);
   };
 
+  // Handles the search for displaying a question, as per the user's search criteria
   const handleSearchQuestion = async () => {
     if (fetchRelatedQuestion && fetchRelatedQuestion[0]) {
       setSearchedQuestion(fetchRelatedQuestion[0].question);
@@ -47,6 +57,7 @@ const CreateQuestions = () => {
     }
   };
 
+  // Handles the validation and submission of a question
   const handleSubmit = async () => {
     if (
       question.trim() === '' ||
@@ -74,10 +85,12 @@ const CreateQuestions = () => {
     }
   };
 
+  // Handles the logic to display further details of a question when clicked
   const handleQuestionClick = (index: number) => {
     setSelectedQuestionIndex(index === selectedQuestionIndex ? null : index);
   };
 
+  // Renders the UI for creating and searching questions
   return (
     <div className="container mt-5">
       <div className="row">

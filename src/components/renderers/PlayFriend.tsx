@@ -4,6 +4,10 @@ interface Props {
   onClick: () => void;
 }
 
+/**
+ * The PlayFriend component represents a button for initiating gameplay with a friend.
+ * It triggers the provided onClick function when clicked.
+ */
 const PlayFriend: React.FC<Props> = ({ onClick }: Props) => {
   return (
     <button

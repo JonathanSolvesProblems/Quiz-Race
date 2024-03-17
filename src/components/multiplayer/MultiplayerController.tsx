@@ -3,23 +3,31 @@ import QuestionRenderer from '../renderers/QuestionRenderer'; // Assuming correc
 import { useMutation, useQuery } from 'convex/react';
 import { api } from '../../../convex/_generated/api';
 
+// Define the props expected by the MultiplayerController component
 interface Props {
   loadQuestions: QuestionSchema[];
   handleCorrectAnswerSelected: () => void;
   handleNextQuestion: () => void;
 }
 
+// Define the structure of a single trivia question
 interface QuestionSchema {
   question: string;
   options: string[];
   correctAnswer: string;
 }
 
+/**
+ * The MultiplayerController component manages the multiplayer gameplay logic for Quiz Race.
+ * It handles joining a game room, waiting for another player to join, initializing game state,
+ * loading questions from the database, rendering questions, and handling user interactions.
+ */
 const MultiplayerController: React.FC<Props> = ({
   loadQuestions,
   handleCorrectAnswerSelected,
   handleNextQuestion,
 }) => {
+  // Hooks for managing game state and interactions, as well as Convex functions for querying and updating data.
   const createRoom = useMutation(api.rooms.createRoom);
   const waitingRoomQuery = useQuery(api.rooms.getWaitingRoom);
   const getPlayerID = useQuery(api.players.getPlayerID);
@@ -36,6 +44,7 @@ const MultiplayerController: React.FC<Props> = ({
   const [playerWaiting, setPlayerWaiting] = useState<boolean>(false);
   const [inSameRoom, setInSameRoom] = useState<boolean>(false);
 
+  // Check if the game is ready to start
   const checkGameReadyState = (gameReady: any) => {
     if (gameReady) {
       setQuestions(gameReady.questions);
@@ -49,6 +58,8 @@ const MultiplayerController: React.FC<Props> = ({
 
   let gameReady: any;
 
+  // Call back for when a player joins a room
+  // Handles the creation of rooms and checks if existing rooms exist with player waiting
   const joinRoom = async () => {
     try {
       if (waitingRoomQuery) {
@@ -75,10 +86,12 @@ const MultiplayerController: React.FC<Props> = ({
     }
   };
 
+  // Updates client readiness based on game state and room status
   useEffect(() => {
     setClientReady(inSameRoom);
   }, [isGameReady, inSameRoom]);
 
+  // Loads the randomize questions into a created room
   useEffect(() => {
     if (loadQuestions) {
       const questionHolder: string[] = [];
@@ -100,6 +113,7 @@ const MultiplayerController: React.FC<Props> = ({
     }
   }, [loadQuestions]);
 
+  // Notifies all clients that the game is ready
   useEffect(() => {
     if (gameReady) {
       const notifyClientsGameReady = checkGameReadyState(gameReady);
@@ -108,6 +122,7 @@ const MultiplayerController: React.FC<Props> = ({
     }
   }, [gameReady]);
 
+  // Validates if the client has another player in the same room as them
   useEffect(() => {
     const checkPlayerRoom = async () => {
       try {
@@ -131,6 +146,7 @@ const MultiplayerController: React.FC<Props> = ({
     checkPlayerRoom();
   }, [playerWaiting, waitingRoomQuery, gameReady]);
 
+  // Renders the appropriate contents, based on the state of the game
   return (
     <div>
       {!clientReady && !playerWaiting ? (
@@ -155,7 +171,12 @@ const MultiplayerController: React.FC<Props> = ({
         </div>
       ) : playerWaiting ? (
         <div className="waiting-room-container">
-          <p className="waiting-message">Waiting for player to join...</p>
+          <p className="waiting-message">
+            Waiting for player to join...
+            <br />
+            Please note that the multiplayer feature will be complete in a
+            future release and is currently not available.
+          </p>
         </div>
       ) : (
         <div className="question-container">

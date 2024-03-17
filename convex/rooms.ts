@@ -2,6 +2,7 @@ import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
 import { GameStatus } from "./common";
 
+// Retrieves all rooms
 export const getRooms = query({
   args: {},
   handler: async (ctx) => {
@@ -9,6 +10,7 @@ export const getRooms = query({
   },
 });
 
+// Retrieves a room in the waiting state if exists
 export const getWaitingRoom = query({
   args: {},
   handler: async (ctx) => {
@@ -16,6 +18,7 @@ export const getWaitingRoom = query({
   },
 });
 
+// Retrives a specific room by ID
 export const getRoom = query({
   args: { id: v.id("rooms") },
   handler: async (ctx, args) => {
@@ -23,6 +26,7 @@ export const getRoom = query({
   },
 });
 
+// Retrieves a room with a game state of ready
 export const getGameReady = query({
   args: {},
   handler: async (ctx) => {
@@ -39,6 +43,7 @@ export const getGameReady = query({
   },
 });
 
+// Retrieves a room with a player in the same same room as the playing client
 export const checkIfPlayerInSameRoom = mutation({
   args: { id: v.id("players") },
   handler: async (ctx, args) => {
@@ -54,6 +59,7 @@ export const checkIfPlayerInSameRoom = mutation({
   },
 });
 
+// Creates a new room and connected with the player who created it
 export const createRoom = mutation({
   args: { player1_score: v.number(), player2_score: v.number(), questions: v.array(v.string()), options: v.array(v.array(v.string())), correctAnswers: v.array(v.string()), username: v.string() },
   handler: async (ctx, args) => {
@@ -63,6 +69,7 @@ export const createRoom = mutation({
   },
 });
 
+// Updates the capacity of the room, as the second player joins
 export const updateRoomCapacity = mutation({
   args: { id: v.id("rooms")},
   handler: async (ctx, args) => {
