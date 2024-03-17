@@ -15,10 +15,12 @@ import type {
   FunctionReference,
 } from "convex/server";
 import type * as common from "../common.js";
-import type * as httpActions from "../httpActions.js";
 import type * as players from "../players.js";
 import type * as questions from "../questions.js";
 import type * as rooms from "../rooms.js";
+import type * as unit_tests_test_functions_players from "../unit_tests/test_functions/players.js";
+import type * as unit_tests_test_functions_questions from "../unit_tests/test_functions/questions.js";
+import type * as unit_tests_test_functions_rooms from "../unit_tests/test_functions/rooms.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -30,10 +32,12 @@ import type * as rooms from "../rooms.js";
  */
 declare const fullApi: ApiFromModules<{
   common: typeof common;
-  httpActions: typeof httpActions;
   players: typeof players;
   questions: typeof questions;
   rooms: typeof rooms;
+  "unit_tests/test_functions/players": typeof unit_tests_test_functions_players;
+  "unit_tests/test_functions/questions": typeof unit_tests_test_functions_questions;
+  "unit_tests/test_functions/rooms": typeof unit_tests_test_functions_rooms;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,

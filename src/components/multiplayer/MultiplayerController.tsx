@@ -115,7 +115,7 @@ const MultiplayerController: React.FC<Props> = ({
           const isPlayerInTheSameRoom = await playerInSameRoom({
             id: getPlayerID,
           });
-
+          console.log('here');
           if (isPlayerInTheSameRoom) {
             const notifyClientsGameReady = checkGameReadyState(gameReady);
             setIsGameReady(notifyClientsGameReady);
