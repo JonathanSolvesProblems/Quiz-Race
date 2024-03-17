@@ -8,7 +8,7 @@ import { api } from '../../convex/_generated/api';
 import CreateQuestions from './renderers/CreateQuestions';
 import MultiplayerController from './multiplayer/MultiplayerController';
 
-// Define the structure of a single trivia question
+// Structure of a single trivia question
 interface QuestionSchema {
   question: string;
   options: string[];

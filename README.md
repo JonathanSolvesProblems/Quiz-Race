@@ -2,8 +2,8 @@
 
 Quiz Race is an engaging and interactive trivia game where players can test their knowledge. With a user-friendly interface and a vast database of trivia questions, Quiz Race offers an exciting gaming experience for users of all ages. Additionally, it empowers users to contribute their own questions to enrich the database.
 
-- Demo Video: TODO
-- Public Access: TODO
+- Demo: [Video Demonstration](https://www.youtube.com/watch?v=3VxyZ4ZbvLU)
+- Try It Out: [Quiz Race](https://main--quizrace.netlify.app/)
 
 # Key Features
 
@@ -20,9 +20,9 @@ Quiz Race is an engaging and interactive trivia game where players can test thei
 - **Framework/Library:** React.js
 - **Languages:** TypeScript & JavaScript
 - **Database:** Convex
-- **Hosting Platform:** TODO
-- **Version Control:** Git
-- **Testing Frameworks:** Jest
+- **Hosting Platform:** Netlify
+- **Version Control:** GitHub
+- **Testing Framework:** Jest
 
 ## Application Components
 - **GameController:** Manages the gameplay logic for Quiz Race. It handles rendering different game modes, fetching questions from the database, shuffling and displaying questions, managing user interactions, and determining the winner of the game.
